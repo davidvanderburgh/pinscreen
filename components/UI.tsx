@@ -1,10 +1,11 @@
-import { Dispatch, ReactElement } from 'react';
+import { Dispatch, ReactElement, useEffect, useState } from 'react';
 import { Box, InputLabel, MenuItem, Modal, Select, SelectChangeEvent } from "@mui/material";
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector, useStore } from 'react-redux';
 import { AnyAction } from '@reduxjs/toolkit';
 import { setSettings } from '@/store/settings';
 import { RooteState } from '@/store';
 import { Settings } from '@/types';
+import axios from 'axios';
 
 const style = {
   position: 'absolute',
@@ -31,7 +32,15 @@ export const UI = ({open, onClose}: UIProps): ReactElement => {
   const handleClockFormatChange = (event: SelectChangeEvent) => {
     dispatch(setSettings({ clockFormat: event.target.value as string }));
   };
+  
+  const handleClockFontFamilyChange = (event: SelectChangeEvent) => {
+    dispatch(setSettings({ clockFontFamily: event.target.value as string}))
+  }
 
+  const handleClockFontSizeChange = (event: SelectChangeEvent) => {
+    dispatch(setSettings({ clockFontSize: event.target.value as string}))
+  }
+  
   return (
     <>
       <Modal
@@ -55,6 +64,31 @@ export const UI = ({open, onClose}: UIProps): ReactElement => {
             <MenuItem value={'HH:mm'}>HH:mm (20:06)</MenuItem>
             <MenuItem value={'HH:mm:ss'}>HH:mm:ss (20:06:48)</MenuItem>
           </Select>
+          <InputLabel>clock font</InputLabel>
+          <Select
+            value={settings.clockFontFamily}
+            onChange={handleClockFontFamilyChange}
+          >
+            {/* todo: get font list dynamically? */}
+            {['arcade', 'arcade-alternate'].map((fontFamily: string) => (
+              <MenuItem key={fontFamily} value={fontFamily} style={{fontSize: '3rem', fontFamily}}>
+                {fontFamily} 08:06:48pm
+              </MenuItem>
+            ))
+            }
+          </Select>
+          <InputLabel>clock size</InputLabel>
+          <Select
+            value={settings.clockFontSize}
+            onChange={handleClockFontSizeChange}
+          >
+            {['3rem', '4rem', '5rem', '6rem', '7rem', '8rem', '9rem', '10rem', '11rem', '12rem', '13rem', '14rem', '15rem', '16rem'].map((fontSize: string) => (
+              <MenuItem key={fontSize} value={fontSize} style={{fontSize, fontFamily: settings.clockFontFamily}}>
+                08:06:48pm
+              </MenuItem>
+            ))}
+          </Select>
+          
         </Box>
       </Modal>
     </>

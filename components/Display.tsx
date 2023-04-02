@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import $ from 'jquery'
-import styles from '@/styles/homepage.module.scss'
+import styles from '@/styles/display.module.scss'
 import { Settings, VideoFileResponse } from "@/types";
 import { shuffleArray } from "@/utilities";
 import { useClock } from "@/hooks/useClock";
@@ -20,6 +20,8 @@ export const Display = () => {
   const [queuePosition, setQueuePosition] = useState<number>(0)
   const [srcFileName, setSrcFileName] = useState<string>('initial')
   const [currentTime, setCurrentTime] = useState<string>('')
+  const [clockFontFamily, setClockFontFamily] = useState<string>('initial')
+  const [clockFontSize, setClockFontSize] = useState<string>('initial')
   const [data, setData] = useState<VideoFileResponse[]>([])
   const [uiOpen, setUiOpen] = useState<boolean>(false)
   const [videoKey, setVideoKey] = useState<string>('initial')
@@ -30,7 +32,9 @@ export const Display = () => {
   const settings: Settings =
     useSelector((state: RooteState) => state.settings.value);
 
-  useClock(settings.clockFormat, setCurrentTime)
+  useClock({
+    setCurrentTime,
+  })
 
   const refreshData = async (): Promise<void> => {
     setData((await axios.get<VideoFileResponse[]>('/api/getVideo')).data)
@@ -39,7 +43,14 @@ export const Display = () => {
   //on page load refresh the data
   useEffect(() => {
     refreshData()
+    setClockFontFamily(settings.clockFontFamily)
+    setClockFontSize(settings.clockFontSize)
   }, [])
+
+  useEffect(() => {
+    setClockFontFamily(settings.clockFontFamily)
+    setClockFontSize(settings.clockFontSize)
+  }, [settings])
 
   //whenever the queue position changes, also change the src file
   useEffect(() => {
@@ -76,7 +87,12 @@ export const Display = () => {
   return (
     <>
       <section className={styles.showcase} onClick={handleOpenUi}>
-        <span className={styles.clock}>{currentTime}</span>
+        <span id="clock"
+          style={{
+            fontFamily: clockFontFamily,
+            fontSize: clockFontSize,
+          }}
+        >{currentTime}</span>
         {data.length &&
           <video
             key={videoKey}

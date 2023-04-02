@@ -5,4 +5,6 @@ export type VideoFileResponse = {
 
 export type Settings = {
   clockFormat: string
+  clockFontFamily: string
+  clockFontSize: string
 }
