@@ -5,10 +5,9 @@ export const getFontFamilies = async (
   req: NextApiRequest,
   res: NextApiResponse<string[]>
 ): Promise<void> => {
-
-  //font definitions parser from `font-definitions.scss` needed here
-
-  res.send(['arcade', 'arcade-alternate'])
+  const fileContents: string =  (await promises.readFile('styles/font-definitions.scss')).toString()
+  const fontFamilies: string[] = (fileContents.match(/(?<=font-family: ")(.*)(?=";)/gm) ?? [])
+  res.send(fontFamilies)
   res.status(200)
 }
 

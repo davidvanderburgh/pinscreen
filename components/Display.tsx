@@ -1,14 +1,14 @@
+import styles from '@/styles/display.module.scss'
+
 import { useCallback, useEffect, useState } from "react";
 import $ from 'jquery'
-import styles from '@/styles/display.module.scss'
-import { Settings, VideoFileResponse } from "@/types";
+import { VideoFileResponse } from "@/types";
 import { shuffleArray } from "@/utilities";
 import { useClock } from "@/hooks/useClock";
 import axios from 'axios';
 import { UI } from "@/components/UI";
-import { useSelector } from 'react-redux';
-import { RooteState } from "@/store";
 import dayjs from "dayjs";
+import { useSettings } from "@/hooks/useSettings";
 
 const VIDEO_END_PAUSE_TIME = 1000
 const VIDEO_FADE_OUT_TIME = 2000
@@ -17,24 +17,17 @@ const VIDEO_DELAY_TIME = 1000
 const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
 export const Display = () => {
+  const { settings } = useSettings()
+  const { currentTime } = useClock()
+
   const [queuePosition, setQueuePosition] = useState<number>(0)
   const [srcFileName, setSrcFileName] = useState<string>('initial')
-  const [currentTime, setCurrentTime] = useState<string>('')
-  const [clockFontFamily, setClockFontFamily] = useState<string>('initial')
-  const [clockFontSize, setClockFontSize] = useState<string>('initial')
   const [data, setData] = useState<VideoFileResponse[]>([])
   const [uiOpen, setUiOpen] = useState<boolean>(false)
   const [videoKey, setVideoKey] = useState<string>('initial')
   
   const handleOpenUi = () => setUiOpen(true)
   const handleCloseUi = () => setUiOpen(false)
-
-  const settings: Settings =
-    useSelector((state: RooteState) => state.settings.value);
-
-  useClock({
-    setCurrentTime,
-  })
 
   const refreshData = async (): Promise<void> => {
     setData((await axios.get<VideoFileResponse[]>('/api/getVideo')).data)
@@ -43,14 +36,7 @@ export const Display = () => {
   //on page load refresh the data
   useEffect(() => {
     refreshData()
-    setClockFontFamily(settings.clockFontFamily)
-    setClockFontSize(settings.clockFontSize)
   }, [])
-
-  useEffect(() => {
-    setClockFontFamily(settings.clockFontFamily)
-    setClockFontSize(settings.clockFontSize)
-  }, [settings])
 
   //whenever the queue position changes, also change the src file
   useEffect(() => {
@@ -88,9 +74,13 @@ export const Display = () => {
     <>
       <section className={styles.showcase} onClick={handleOpenUi}>
         <span id="clock"
+          className={styles.clock}
           style={{
-            fontFamily: clockFontFamily,
-            fontSize: clockFontSize,
+            fontFamily: settings?.clockFontFamily,
+            fontSize: `${settings?.clockFontSize}rem`,
+            top: settings?.clockPosition === 'top' ? '0%' : undefined,
+            bottom: settings?.clockPosition === 'bottom' ? '0%' : undefined,
+            color: settings?.clockColor,
           }}
         >{currentTime}</span>
         {data.length &&

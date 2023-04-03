@@ -4,7 +4,8 @@ import { PayloadAction, Reducer, createSlice } from '@reduxjs/toolkit';
 const FIRST_TIME_SETTINGS: Partial<Settings> = {
   clockFormat: 'h:mm:ssa',
   clockFontFamily: 'arcade',
-  clockFontSize: '12rem',
+  clockFontSize: 12,
+  clockPosition: 'center',
 }
 
 const settingsSlice = createSlice({

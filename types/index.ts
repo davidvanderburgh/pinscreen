@@ -3,8 +3,12 @@ export type VideoFileResponse = {
   videoFileName: string
 }
 
+export type ClockPosition = 'top' | 'bottom' | 'center'
+
 export type Settings = {
   clockFormat: string
   clockFontFamily: string
-  clockFontSize: string
+  clockFontSize: number
+  clockPosition: ClockPosition
+  clockColor: string
 }

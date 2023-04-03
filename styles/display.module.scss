@@ -9,7 +9,11 @@
   align-items: center;
   background: #111;
   color: #fff;
-  z-index: 2;
+
+  .clock {
+    z-index: 1;
+    position: absolute;
+  }
 
   video {
     position: absolute;
@@ -18,6 +22,5 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    opacity: .65;
   }
 }
