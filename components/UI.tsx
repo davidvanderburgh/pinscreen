@@ -1,7 +1,17 @@
-import { ReactElement, SyntheticEvent } from 'react';
-import { Box, Button, InputLabel, MenuItem, Modal, Select, SelectChangeEvent, Slider } from "@mui/material";
+import styles from '@/styles/ui.module.scss'
+
+import { ReactElement, SyntheticEvent, useState } from 'react';
+import { Box, Button, InputLabel, MenuItem, Modal, Select, SelectChangeEvent, Slider, SxProps } from "@mui/material";
 import { useDispatch } from 'react-redux';
-import { setSettings } from '@/store/settings';
+import {
+  setVideoFadeInOutTime,
+  setTimeBetweenVideos,
+  setClockColor,
+  setClockFontFamily,
+  setClockFontSize,
+  setClockFormat,
+  setClockPosition,
+} from '@/store/settings';
 import { ClockPosition, Settings } from '@/types';
 import { useFontFamilies } from '@/hooks/useFontFamilies';
 import { useSettings } from '@/hooks/useSettings';
@@ -9,6 +19,43 @@ import { ColorResult, SketchPicker,  } from 'react-color'
 import rgbHex from "rgb-hex";
 import { useVideoData } from '@/hooks/useVideoData';
 import { RootDispatch } from '@/store';
+
+const modalSx: SxProps = {
+  width: 400,
+  color: 'black',
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+}
+
+const FileDetailsModal = () => {
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => {
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  return (
+    <>
+      <Button onClick={handleOpen}>Open File Details</Button>
+      <Modal
+        open={open}
+        onClose={handleClose}
+      >
+        <Box sx={modalSx}>
+          stuff goes here
+
+
+          <Button onClick={handleClose}>Close file details</Button>
+        </Box>
+      </Modal>
+    </>
+  );
+}
+
 
 type UIProps = {
   open: boolean
@@ -26,64 +73,57 @@ export const UI = ({open, onClose}: UIProps): ReactElement => {
   } 
 
   const handleVideoFadeInOutTimeChange = (event: Event | SyntheticEvent<Element, Event>, value: number | number[]) => {
-    dispatch(setSettings({ videoFadeInOutTime: (value as number) }))
+    dispatch(setVideoFadeInOutTime(value as number))
   }
  
   const handleTimeBetweenVideosChange = (event: Event, value: number | number[]) => {
-    dispatch(setSettings({ timeBetweenVideos: value as number }))
+    dispatch(setTimeBetweenVideos(value as number))
   }
 
   const handleClockFormatChange = (event: SelectChangeEvent) => {
-    dispatch(setSettings({ clockFormat: event.target.value as string }));
+    dispatch(setClockFormat(event.target.value as string));
   };
   
   const handleClockFontFamilyChange = (event: SelectChangeEvent) => {
-    dispatch(setSettings({ clockFontFamily: event.target.value as string }))
+    dispatch(setClockFontFamily(event.target.value as string))
   }
 
   const handleClockPositionChange = (event: SelectChangeEvent) => {
-    dispatch(setSettings({ clockPosition: event.target.value as ClockPosition }))
+    dispatch(setClockPosition(event.target.value as ClockPosition))
   }
 
   const handleClockFontSizeChange = (event: Event, value: number | number[]) => {
-    dispatch(setSettings({ clockFontSize: value as number }))
+    dispatch(setClockFontSize(value as number))
   }
   
   const handleClockColorChange = (color: ColorResult) => {
-    dispatch(setSettings({ clockColor: "#" + rgbHex(color.rgb.r, color.rgb.g, color.rgb.b, color.rgb.a) }))
+    dispatch(setClockColor("#" + rgbHex(color.rgb.r, color.rgb.g, color.rgb.b, color.rgb.a)))
   }
   
   return (
     <>
       <Modal
+        className={styles.modal}
         open={open}
         onClose={onClose}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
-      >
-        <Box sx={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          width: 400,
-          bgcolor: 'background.paper',
-          border: '2px solid #000',
-          boxShadow: 24,
-          p: 4,
-        }}>
-
-
+        >
+        <Box
+          className={styles.modalBox}
+          sx={modalSx}
+        >
           {/* count of videos loaded, metrics of how many per game */}
 
           <InputLabel>{videoData.length} videos detected</InputLabel>
           <Button onClick={handleResyncVideoList}>Re-sync video list</Button>
+          <FileDetailsModal />
 
           <InputLabel>video fade in/out time (ms)</InputLabel>
           <Slider
             defaultValue={200}
             min={0}
-            step={5}
+            step={50}
             max={1000}
             valueLabelDisplay="auto"
             value={settings?.videoFadeInOutTime}
@@ -93,7 +133,7 @@ export const UI = ({open, onClose}: UIProps): ReactElement => {
           <Slider
             defaultValue={3}
             min={0}
-            step={.25}
+            step={1}
             max={60}
             valueLabelDisplay="auto"
             value={settings?.timeBetweenVideos}
