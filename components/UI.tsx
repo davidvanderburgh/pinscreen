@@ -1,13 +1,14 @@
-import { Dispatch, ReactElement } from 'react';
-import { Box, InputLabel, MenuItem, Modal, Select, SelectChangeEvent, Slider } from "@mui/material";
+import { Dispatch, ReactElement, SyntheticEvent } from 'react';
+import { Box, Button, InputLabel, MenuItem, Modal, Select, SelectChangeEvent, Slider } from "@mui/material";
 import { useDispatch } from 'react-redux';
 import { AnyAction } from '@reduxjs/toolkit';
 import { setSettings } from '@/store/settings';
 import { ClockPosition, Settings } from '@/types';
 import { useFontFamilies } from '@/hooks/useFontFamilies';
 import { useSettings } from '@/hooks/useSettings';
-import { ColorChangeHandler, ColorResult, SketchPicker, SketchPickerProps } from 'react-color'
+import { ColorResult, SketchPicker,  } from 'react-color'
 import rgbHex from "rgb-hex";
+import { useVideoData } from '@/hooks/useVideoData';
 
 type UIProps = {
   open: boolean
@@ -15,9 +16,22 @@ type UIProps = {
 }
 
 export const UI = ({open, onClose}: UIProps): ReactElement => {
+  const { data: videoData, nextVideo, resync } = useVideoData()
   const { settings } = useSettings()
   const { fontFamilies } = useFontFamilies()
   const dispatch: Dispatch<AnyAction> = useDispatch();
+
+  const handleResyncVideoList = async () => {
+    await resync()
+  } 
+
+  const handleVideoFadeInOutTimeChange = (event: Event | SyntheticEvent<Element, Event>, value: number | number[]) => {
+    dispatch(setSettings({ videoFadeInOutTime: (value as number) }))
+  }
+ 
+  const handleTimeBetweenVideosChange = (event: Event, value: number | number[]) => {
+    dispatch(setSettings({ timeBetweenVideos: value as number }))
+  }
 
   const handleClockFormatChange = (event: SelectChangeEvent) => {
     dispatch(setSettings({ clockFormat: event.target.value as string }));
@@ -58,6 +72,33 @@ export const UI = ({open, onClose}: UIProps): ReactElement => {
           boxShadow: 24,
           p: 4,
         }}>
+
+
+          {/* count of videos loaded, metrics of how many per game */}
+
+          <InputLabel>{videoData.length} videos detected</InputLabel>
+          <Button onClick={handleResyncVideoList}>Re-sync video list</Button>
+
+          <InputLabel>video fade in/out time (ms)</InputLabel>
+          <Slider
+            defaultValue={200}
+            min={0}
+            step={5}
+            max={1000}
+            valueLabelDisplay="auto"
+            value={settings?.videoFadeInOutTime}
+            onChange={handleVideoFadeInOutTimeChange}
+          />
+          <InputLabel>time between videos (seconds)</InputLabel>
+          <Slider
+            defaultValue={3}
+            min={0}
+            step={.25}
+            max={60}
+            valueLabelDisplay="auto"
+            value={settings?.timeBetweenVideos}
+            onChange={handleTimeBetweenVideosChange}
+          />
           <InputLabel>clock format</InputLabel>
           <Select
             value={settings?.clockFormat}

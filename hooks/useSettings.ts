@@ -9,9 +9,9 @@ export const useSettings = () => {
   const storeSettings: Settings =
     useSelector((state: RooteState) => state.settings.value);
 
-    useEffect(() => {
-      setSettings(storeSettings)
-    }, [storeSettings])
+  useEffect(() => {
+    setSettings(storeSettings)
+  }, [storeSettings])
 
   return {
     settings

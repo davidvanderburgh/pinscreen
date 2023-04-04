@@ -26,30 +26,27 @@ const getVideoFileResponsesFromFiles = async (): Promise<VideoFileResponse[]> =>
     return videoFileResponsesCache
   }
   const videoFileResponses: VideoFileResponse[] = []
-  for await (const f of getFiles('public/videos')) {
-    const videoFileName: string = getPublicVideosPath(f)
-    videoFileResponses.push({
-      game: (videoFileName.match(/(?<=(\/|\\))(.*?)(?=(\/|\\))/) ?? ['no game'])[0],
-      videoFileName,
-    })
+  for await (const file of getFiles('public/videos')) {
+    const videoFileName: string = getPublicVideosPath(file)
+    if (videoFileName.endsWith('.mp4')) {
+      videoFileResponses.push({
+        game: (videoFileName.match(/(?<=(\/|\\))(.*?)(?=(\/|\\))/) ?? ['no game'])[0],
+        videoFileName,
+      })
+    }
   }
   videoFileResponsesCache = videoFileResponses
   return videoFileResponses
-}
-
-export const resetCache = async (
-  req: NextApiRequest,
-  res: NextApiResponse<string>
-): Promise<void> => {
-  videoFileResponsesCache = []
-  res.send('cache reset')
-  res.status(200)
 }
 
 export const getVideo = async (
   req: NextApiRequest,
   res: NextApiResponse<VideoFileResponse[]>
 ): Promise<void> => {
+  if (req.query?.resetCache) {
+    videoFileResponsesCache = []
+  }
+
   const videoFileResponses: VideoFileResponse[] =
     shuffleArray(await getVideoFileResponsesFromFiles())
 
