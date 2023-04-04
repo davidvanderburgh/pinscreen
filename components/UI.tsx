@@ -1,7 +1,6 @@
-import { Dispatch, ReactElement, SyntheticEvent } from 'react';
+import { ReactElement, SyntheticEvent } from 'react';
 import { Box, Button, InputLabel, MenuItem, Modal, Select, SelectChangeEvent, Slider } from "@mui/material";
 import { useDispatch } from 'react-redux';
-import { AnyAction } from '@reduxjs/toolkit';
 import { setSettings } from '@/store/settings';
 import { ClockPosition, Settings } from '@/types';
 import { useFontFamilies } from '@/hooks/useFontFamilies';
@@ -9,6 +8,7 @@ import { useSettings } from '@/hooks/useSettings';
 import { ColorResult, SketchPicker,  } from 'react-color'
 import rgbHex from "rgb-hex";
 import { useVideoData } from '@/hooks/useVideoData';
+import { RootDispatch } from '@/store';
 
 type UIProps = {
   open: boolean
@@ -19,7 +19,7 @@ export const UI = ({open, onClose}: UIProps): ReactElement => {
   const { data: videoData, nextVideo, resync } = useVideoData()
   const { settings } = useSettings()
   const { fontFamilies } = useFontFamilies()
-  const dispatch: Dispatch<AnyAction> = useDispatch();
+  const dispatch: RootDispatch = useDispatch();
 
   const handleResyncVideoList = async () => {
     await resync()

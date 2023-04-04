@@ -18,4 +18,5 @@ store.subscribe(()=>{
     .setItem('reduxState', JSON.stringify(store.getState()))
 })
 
-export type  RooteState = ReturnType<typeof store.getState>;
+export type RootState = ReturnType<typeof store.getState>;
+export type RootDispatch = typeof store.dispatch
