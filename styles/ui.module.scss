@@ -3,9 +3,13 @@
   flex-direction: row;
   align-items: center;
   justify-content: center;
-
+  
   .modalBox {
-    overflow: scroll;
+    overflow-y: auto;
     max-height: 80vh;
+    max-width: 80vh;
+    overflow-x: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
 }

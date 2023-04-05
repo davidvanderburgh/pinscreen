@@ -23,7 +23,7 @@ export const Display = () => {
 
   //whenever the queue position changes, also change the src file
   useEffect(() => {
-    setSrcFileName(data[queuePosition]?.videoFileName ?? '')
+    setSrcFileName(data[queuePosition]?.fileName ?? '')
   }, [data, queuePosition])
 
   const onVideoEnded = useCallback(async () => {

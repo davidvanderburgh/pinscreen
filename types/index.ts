@@ -1,6 +1,11 @@
-export type VideoFileResponse = {
+export type VideoFile = {
   game: string
-  videoFileName: string
+  fileName: string
+}
+
+export type VideoDetails = {
+  game: string,
+  files: string[],
 }
 
 export type ClockPosition = 'top' | 'bottom' | 'center'

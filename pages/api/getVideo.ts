@@ -1,56 +1,39 @@
 import { NextApiRequest, NextApiResponse } from "next"
-import { promises } from 'fs'
-import { resolve } from "path"
-import { VideoFileResponse } from "@/types";
-import { shuffleArray } from "@/utilities";
+import { VideoFile } from "@/types";
+import { getFiles, getPublicVideosPath, shuffleArray } from "@/utilities";
 
-async function* getFiles(dir: string): AsyncGenerator<string, void, unknown> {
-  const dirents = await promises.readdir(dir, { withFileTypes: true });
-  for (const dirent of dirents) {
-    const res = resolve(`${dir}`, dirent.name);
-    if (dirent.isDirectory()) {
-      yield* getFiles(res);
-    } else {
-      yield res;
-    }
+let videoFilesCache: VideoFile[] = [] 
+
+const getVideoFiles = async (): Promise<VideoFile[]> => {
+  if (videoFilesCache.length) {
+    return videoFilesCache
   }
-}
-
-const getPublicVideosPath = (fileName: string): string =>
-  (fileName.match(/videos(\/|\\).*/) ?? ['invalid'])[0]
-
-let videoFileResponsesCache: VideoFileResponse[] = [] 
-
-const getVideoFileResponsesFromFiles = async (): Promise<VideoFileResponse[]> => {
-  if (videoFileResponsesCache.length) {
-    return videoFileResponsesCache
-  }
-  const videoFileResponses: VideoFileResponse[] = []
+  const videoFiles: VideoFile[] = []
   for await (const file of getFiles('public/videos')) {
     const videoFileName: string = getPublicVideosPath(file)
     if (videoFileName.endsWith('.mp4')) {
-      videoFileResponses.push({
+      videoFiles.push({
         game: (videoFileName.match(/(?<=(\/|\\))(.*?)(?=(\/|\\))/) ?? ['no game'])[0],
-        videoFileName,
+        fileName: videoFileName,
       })
     }
   }
-  videoFileResponsesCache = videoFileResponses
-  return videoFileResponses
+  videoFilesCache = videoFiles
+  return videoFiles
 }
 
 export const getVideo = async (
   req: NextApiRequest,
-  res: NextApiResponse<VideoFileResponse[]>
+  res: NextApiResponse<VideoFile[]>
 ): Promise<void> => {
   if (req.query?.resetCache) {
-    videoFileResponsesCache = []
+    videoFilesCache = []
   }
 
-  const videoFileResponses: VideoFileResponse[] =
-    shuffleArray(await getVideoFileResponsesFromFiles())
+  const videoFiles: VideoFile[] =
+    shuffleArray(await getVideoFiles())
 
-  res.send(videoFileResponses)
+  res.send(videoFiles)
   res.status(200)
 }
 

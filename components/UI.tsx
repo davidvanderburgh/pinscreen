@@ -1,6 +1,6 @@
 import styles from '@/styles/ui.module.scss'
 
-import { ReactElement, SyntheticEvent, useState } from 'react';
+import { ReactElement, SyntheticEvent, useEffect, useState } from 'react';
 import { Box, Button, InputLabel, MenuItem, Modal, Select, SelectChangeEvent, Slider, SxProps } from "@mui/material";
 import { useDispatch } from 'react-redux';
 import {
@@ -12,25 +12,32 @@ import {
   setClockFormat,
   setClockPosition,
 } from '@/store/settings';
-import { ClockPosition, Settings } from '@/types';
+import { ClockPosition, Settings, VideoDetails, VideoFile } from '@/types';
 import { useFontFamilies } from '@/hooks/useFontFamilies';
 import { useSettings } from '@/hooks/useSettings';
 import { ColorResult, SketchPicker,  } from 'react-color'
 import rgbHex from "rgb-hex";
 import { useVideoData } from '@/hooks/useVideoData';
 import { RootDispatch } from '@/store';
+import axios from 'axios';
+import Accordion from '@mui/material/Accordion';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import Typography from '@mui/material/Typography';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { Toast } from './Toast';
 
 const modalSx: SxProps = {
-  width: 400,
   color: 'black',
   bgcolor: 'background.paper',
-  border: '2px solid #000',
+  border: '2px solid black',
   boxShadow: 24,
   p: 4,
 }
 
 const FileDetailsModal = () => {
   const [open, setOpen] = useState(false);
+  const [videoDetails, setVideoDetails] = useState<VideoDetails[]>([])
   const handleOpen = () => {
     setOpen(true);
   };
@@ -38,17 +45,54 @@ const FileDetailsModal = () => {
     setOpen(false);
   };
 
+  const [expanded, setExpanded] = useState<string | false>(false);
+
+  const handleChange =
+    (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
+      setExpanded(isExpanded ? panel : false);
+    };
+
+  useEffect(() => {
+    (async () => {
+      setVideoDetails((await axios.get('/api/getVideoDetails')).data)
+    })()
+  }, [])
+
   return (
     <>
       <Button onClick={handleOpen}>Open File Details</Button>
       <Modal
+        className={styles.modal}
         open={open}
         onClose={handleClose}
       >
-        <Box sx={modalSx}>
-          stuff goes here
-
-
+        <Box
+          className={styles.modalBox}
+          sx={modalSx}
+        >
+          {videoDetails.map((videoDetail: VideoDetails) => (
+            <Accordion
+              key={videoDetail.game}
+              expanded={expanded === videoDetail.game}
+              onChange={handleChange(videoDetail.game)}
+            >
+              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                <Typography sx={{ width: '33%', flexShrink: 0 }}>
+                  {videoDetail.game}
+                </Typography>
+                <Typography sx={{ color: 'text.secondary' }}>
+                  {videoDetail.files.length} files detected
+                </Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                {videoDetail.files.map((file: string) => (
+                  <Typography overflow='hidden' whiteSpace='nowrap' textOverflow='ellipsis' key={file}>
+                    {file}
+                  </Typography>
+                ))}
+              </AccordionDetails>
+            </Accordion>
+          ))}
           <Button onClick={handleClose}>Close file details</Button>
         </Box>
       </Modal>
@@ -56,20 +100,26 @@ const FileDetailsModal = () => {
   );
 }
 
-
 type UIProps = {
   open: boolean
   onClose?: ((event: {}, reason: "backdropClick" | "escapeKeyDown") => void) | undefined
 }
 
 export const UI = ({open, onClose}: UIProps): ReactElement => {
-  const { data: videoData, nextVideo, resync } = useVideoData()
+  const { data: videoData, resync } = useVideoData()
   const { settings } = useSettings()
   const { fontFamilies } = useFontFamilies()
   const dispatch: RootDispatch = useDispatch();
 
+  const [toastOpen, setToastOpen] = useState(false);
+
+  const handleFileImport = async () => {
+    console.log('tbd')
+  }
+
   const handleResyncVideoList = async () => {
     await resync()
+    setToastOpen(true)
   } 
 
   const handleVideoFadeInOutTimeChange = (event: Event | SyntheticEvent<Element, Event>, value: number | number[]) => {
@@ -113,12 +163,10 @@ export const UI = ({open, onClose}: UIProps): ReactElement => {
           className={styles.modalBox}
           sx={modalSx}
         >
-          {/* count of videos loaded, metrics of how many per game */}
-
           <InputLabel>{videoData.length} videos detected</InputLabel>
-          <Button onClick={handleResyncVideoList}>Re-sync video list</Button>
+          <Button onClick={handleFileImport}>import videos</Button>
+          <Button onClick={handleResyncVideoList}>re-sync video list</Button>
           <FileDetailsModal />
-
           <InputLabel>video fade in/out time (ms)</InputLabel>
           <Slider
             defaultValue={200}
@@ -157,6 +205,7 @@ export const UI = ({open, onClose}: UIProps): ReactElement => {
           <Select
             value={settings?.clockFontFamily}
             onChange={handleClockFontFamilyChange}
+            style={{ fontFamily: settings?.clockFontFamily}} 
           >
             {fontFamilies.map((fontFamily: string) => (
               <MenuItem key={fontFamily} value={fontFamily} style={{fontSize: '3rem', fontFamily}}>
@@ -190,5 +239,10 @@ export const UI = ({open, onClose}: UIProps): ReactElement => {
           />
         </Box>
       </Modal>
+      <Toast open={toastOpen} onFinish={() => setToastOpen(false)}>
+        <>
+          {videoData.length} files detected
+        </>
+      </Toast>
     </>
   )}

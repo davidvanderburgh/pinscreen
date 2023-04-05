@@ -1,20 +1,20 @@
-import { VideoFileResponse } from "@/types"
+import { VideoFile } from "@/types"
 import axios from "axios"
 import dayjs from "dayjs"
 import { useCallback, useEffect, useState } from "react"
 
 export const useVideoData = () => {
-  const [data, setData] = useState<VideoFileResponse[]>([])
+  const [data, setData] = useState<VideoFile[]>([])
   const [queuePosition, setQueuePosition] = useState<number>(0)
   const [videoKey, setVideoKey] = useState<string>('initial')
 
   const refresh = async (): Promise<void> => {
-    setData((await axios.get<VideoFileResponse[]>('/api/getVideo')).data)
+    setData((await axios.get<VideoFile[]>('/api/getVideo')).data)
     setQueuePosition(0)
   }
 
   const resync = async(): Promise<void> => {
-    setData((await axios.get<VideoFileResponse[]>('/api/getVideo?resetCache=true')).data)
+    setData((await axios.get<VideoFile[]>('/api/getVideo?resetCache=true')).data)
     setQueuePosition(0)
   }
   
