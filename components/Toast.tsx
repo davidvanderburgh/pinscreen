@@ -1,4 +1,4 @@
-import { ReactElement, forwardRef, useState } from 'react';
+import { forwardRef } from 'react';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert, { AlertProps } from '@mui/material/Alert';
 
@@ -16,7 +16,6 @@ type ToastProps = {
 }
 
 export const Toast = ({ open, onFinish, children}: ToastProps) => {
-  
   const handleToastClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
     if (reason === 'clickaway') {
       return;

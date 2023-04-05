@@ -1,6 +1,6 @@
 import styles from '@/styles/display.module.scss'
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import $ from 'jquery'
 import { useClock } from "@/hooks/useClock";
 import { UI } from "@/components/UI";
@@ -15,16 +15,14 @@ export const Display = () => {
   const { currentTime } = useClock()
   const { data, queuePosition, nextVideo, videoKey} = useVideoData()
 
-  const [srcFileName, setSrcFileName] = useState<string>('initial')
   const [uiOpen, setUiOpen] = useState<boolean>(false)
   
   const handleOpenUi = () => setUiOpen(true)
   const handleCloseUi = () => setUiOpen(false)
 
-  //whenever the queue position changes, also change the src file
-  useEffect(() => {
-    setSrcFileName(data[queuePosition]?.fileName ?? '')
-  }, [data, queuePosition])
+  const srcFileName = useMemo(() => 
+    data[queuePosition]?.fileName ?? ''
+  , [queuePosition, data])
 
   const onVideoEnded = useCallback(async () => {
     $('#video').fadeOut(settings?.videoFadeInOutTime ?? 0)

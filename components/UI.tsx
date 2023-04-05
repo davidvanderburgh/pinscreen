@@ -12,10 +12,10 @@ import {
   setClockFormat,
   setClockPosition,
 } from '@/store/settings';
-import { ClockPosition, Settings, VideoDetails, VideoFile } from '@/types';
+import { ClockPosition, VideoDetails } from '@/types';
 import { useFontFamilies } from '@/hooks/useFontFamilies';
 import { useSettings } from '@/hooks/useSettings';
-import { ColorResult, SketchPicker,  } from 'react-color'
+import { ColorResult, SketchPicker } from 'react-color'
 import rgbHex from "rgb-hex";
 import { useVideoData } from '@/hooks/useVideoData';
 import { RootDispatch } from '@/store';
@@ -25,7 +25,7 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { Toast } from './Toast';
+import { Toast } from '@/components/Toast';
 
 const modalSx: SxProps = {
   color: 'black',
