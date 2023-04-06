@@ -2,6 +2,7 @@ import { ClockPosition, Settings } from '@/types';
 import { PayloadAction, Reducer, createSlice } from '@reduxjs/toolkit';
 
 const FIRST_TIME_SETTINGS: Settings = {
+  balanceQueue: true,
   clockFormat: 'h:mm:ssa',
   clockFontFamily: 'arcade',
   clockFontSize: 12,
@@ -15,6 +16,9 @@ const settingsSlice = createSlice({
   name: 'settings',
   initialState: { value: FIRST_TIME_SETTINGS},
   reducers: {
+    setBalanceQueue: (state, action: PayloadAction<boolean>) => {
+      state.value.balanceQueue = action.payload
+    },
     setClockFormat: (state, action: PayloadAction<string>) => {
       state.value.clockFormat = action.payload
     },
@@ -40,6 +44,7 @@ const settingsSlice = createSlice({
 });
 
 export const {
+  setBalanceQueue,
   setClockFormat,
   setClockFontFamily,
   setClockFontSize,

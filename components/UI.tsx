@@ -1,16 +1,31 @@
 import styles from '@/styles/ui.module.scss'
 
-import { ReactElement, SyntheticEvent, useEffect, useState } from 'react';
-import { Box, Button, InputLabel, MenuItem, Modal, Select, SelectChangeEvent, Slider, SxProps } from "@mui/material";
+import { ChangeEvent, ReactElement, SyntheticEvent, useEffect, useState } from 'react';
+import {
+  Box,
+  Button,
+  Checkbox,
+  InputLabel,
+  FormGroup,
+  FormControlLabel,
+  MenuItem,
+  Modal,
+  Select,
+  SelectChangeEvent,
+  Slider,
+  SxProps,
+  Tooltip,
+} from "@mui/material";
 import { useDispatch } from 'react-redux';
 import {
-  setVideoFadeInOutTime,
-  setTimeBetweenVideos,
+  setBalanceQueue,
   setClockColor,
   setClockFontFamily,
   setClockFontSize,
   setClockFormat,
   setClockPosition,
+  setTimeBetweenVideos,
+  setVideoFadeInOutTime,
 } from '@/store/settings';
 import { ClockPosition, VideoDetails } from '@/types';
 import { useFontFamilies } from '@/hooks/useFontFamilies';
@@ -122,6 +137,10 @@ export const UI = ({open, onClose}: UIProps): ReactElement => {
     setToastOpen(true)
   } 
 
+  const handleBalanceQueueChange = (event: ChangeEvent<HTMLInputElement>, checked: boolean) => {
+    dispatch(setBalanceQueue(checked))
+  }
+
   const handleVideoFadeInOutTimeChange = (event: Event | SyntheticEvent<Element, Event>, value: number | number[]) => {
     dispatch(setVideoFadeInOutTime(value as number))
   }
@@ -163,10 +182,18 @@ export const UI = ({open, onClose}: UIProps): ReactElement => {
           className={styles.modalBox}
           sx={modalSx}
         >
-          <InputLabel>{videoData.length} videos detected</InputLabel>
+          <Tooltip title='a new random queue is generated once alls files have been played through'>
+            <InputLabel>{videoData.length} videos queued</InputLabel>
+          </Tooltip>
           <Button onClick={handleFileImport}>import videos</Button>
           <Button onClick={handleResyncVideoList}>re-sync video list</Button>
           <FileDetailsModal />
+          <FormGroup>
+            <Tooltip title='allows up to 200 videos per game per queue cycle so that a game with more videos is not over-represented'>
+              <FormControlLabel control={<Checkbox checked={settings?.balanceQueue} onChange={handleBalanceQueueChange} />} label="Balance video queue" />
+            </Tooltip>
+            <FormControlLabel disabled control={<Checkbox />} label="Disabled" />
+          </FormGroup>
           <InputLabel>video fade in/out time (ms)</InputLabel>
           <Slider
             defaultValue={200}

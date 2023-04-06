@@ -22,6 +22,24 @@ const getVideoFiles = async (): Promise<VideoFile[]> => {
   return videoFiles
 }
 
+const balanceQueue = (videoFiles: VideoFile[]): VideoFile[] => {
+  const gameVideoCount: Record<string, number> = {}
+  const result: VideoFile[] = []
+  for (const videoFile of videoFiles) {
+    if (!gameVideoCount[videoFile.game]) {
+      gameVideoCount[videoFile.game] = 1
+    }
+    else {
+      gameVideoCount[videoFile.game]++
+    }
+
+    if (gameVideoCount[videoFile.game] < 200) {
+      result.push(videoFile)
+    }
+  }
+  return shuffleArray(result)
+}
+
 export const getVideo = async (
   req: NextApiRequest,
   res: NextApiResponse<VideoFile[]>
@@ -33,7 +51,7 @@ export const getVideo = async (
   const videoFiles: VideoFile[] =
     shuffleArray(await getVideoFiles())
 
-  res.send(videoFiles)
+  res.send(req.query?.balanceQueue === 'true' ? balanceQueue(videoFiles) : videoFiles)
   res.status(200)
 }
 

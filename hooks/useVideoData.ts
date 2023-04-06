@@ -2,26 +2,30 @@ import { VideoFile } from "@/types"
 import axios from "axios"
 import dayjs from "dayjs"
 import { useCallback, useEffect, useState } from "react"
+import { useSettings } from "./useSettings"
 
 export const useVideoData = () => {
   const [data, setData] = useState<VideoFile[]>([])
   const [queuePosition, setQueuePosition] = useState<number>(0)
   const [videoKey, setVideoKey] = useState<string>('initial')
+  const { settings } = useSettings()
 
-  const refresh = async (): Promise<void> => {
-    setData((await axios.get<VideoFile[]>('/api/getVideo')).data)
-    setQueuePosition(0)
-  }
+  const refresh = useCallback(async (): Promise<void> => {
+    setData((await axios.get<VideoFile[]>(`/api/getVideo?balanceQueue=${settings?.balanceQueue}`)).data)
+  }, [settings?.balanceQueue])
 
   const resync = async(): Promise<void> => {
-    setData((await axios.get<VideoFile[]>('/api/getVideo?resetCache=true')).data)
-    setQueuePosition(0)
+    setData((await axios.get<VideoFile[]>(`/api/getVideo?resetCache=true&balanceQueue=${settings?.balanceQueue}`)).data)
   }
   
   //on page load refresh the data
   useEffect(() => {
     refresh()
-  }, [])
+  }, [refresh])
+
+  useEffect(() => {
+    setQueuePosition(0)
+  }, [data])
 
   const nextVideo = useCallback(async (): Promise<void> => {
     if (queuePosition + 1 >= (data?.length ?? 0)) {
@@ -31,7 +35,7 @@ export const useVideoData = () => {
     } else {
       setQueuePosition(queuePosition + 1)
     }
-  }, [data?.length, queuePosition])
+  }, [data?.length, queuePosition, refresh])
 
   return {
     data,

@@ -11,11 +11,12 @@ export type VideoDetails = {
 export type ClockPosition = 'top' | 'bottom' | 'center'
 
 export type Settings = {
+  balanceQueue: boolean
   clockFormat: string
   clockFontFamily: string
   clockFontSize: number
   clockPosition: ClockPosition
   clockColor: string
-  videoFadeInOutTime: number
   timeBetweenVideos: number
+  videoFadeInOutTime: number
 }
