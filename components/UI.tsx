@@ -189,10 +189,15 @@ export const UI = ({open, onClose}: UIProps): ReactElement => {
           <Button onClick={handleResyncVideoList}>re-sync video list</Button>
           <FileDetailsModal />
           <FormGroup>
-            <Tooltip title='allows up to 200 videos per game per queue cycle so that a game with more videos is not over-represented'>
-              <FormControlLabel control={<Checkbox checked={settings?.balanceQueue} onChange={handleBalanceQueueChange} />} label="Balance video queue" />
+            <Tooltip title='Recommended! Allows up to 200 videos per game per queue cycle so that a game with more videos is not over-represented'>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={settings?.balanceQueue}
+                    onChange={handleBalanceQueueChange}
+                  />}
+                label="Balance video queue" />
             </Tooltip>
-            <FormControlLabel disabled control={<Checkbox />} label="Disabled" />
           </FormGroup>
           <InputLabel>video fade in/out time (ms)</InputLabel>
           <Slider

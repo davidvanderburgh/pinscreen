@@ -13,7 +13,7 @@ const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 export const Display = () => {
   const { settings } = useSettings()
   const { currentTime } = useClock()
-  const { data, queuePosition, nextVideo, videoKey} = useVideoData()
+  const { data, queuePosition, nextVideo, endOfQueueKey} = useVideoData()
 
   const [uiOpen, setUiOpen] = useState<boolean>(false)
   
@@ -49,7 +49,7 @@ export const Display = () => {
         }
         {data.length !== 0 &&
           <ReactPlayer
-            key={videoKey}
+            key={endOfQueueKey}
             id='video'
             url={srcFileName}
             muted
