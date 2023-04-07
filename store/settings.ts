@@ -4,11 +4,14 @@ import { PayloadAction, Reducer, createSlice } from '@reduxjs/toolkit';
 const FIRST_TIME_SETTINGS: Settings = {
   balanceQueue: true,
   blinkStyle: 'smooth',
-  clockFormat: 'h:mm:ssa',
+  clockColor: '#FFF',
   clockFontFamily: 'arcade',
   clockFontSize: 12,
+  clockFormat: 'h:mm:ssa',
   clockPosition: 'center',
-  clockColor: '#FFF',
+  clockShadowHorizontal: 2,
+  clockShadowVertical: 2,
+  clockShadowBlur: 8,
   videoFadeInOutTime: 100,
   timeBetweenVideos: 5,
 }
@@ -23,8 +26,8 @@ const settingsSlice = createSlice({
     setClockBlinkStyle: (state, action: PayloadAction<BlinkStyle>) => {
       state.value.blinkStyle = action.payload
     },
-    setClockFormat: (state, action: PayloadAction<string>) => {
-      state.value.clockFormat = action.payload
+    setClockColor: (state, action: PayloadAction<string>) => {
+      state.value.clockColor = action.payload
     },
     setClockFontFamily: (state, action: PayloadAction<string>) => {
       state.value.clockFontFamily = action.payload
@@ -32,11 +35,20 @@ const settingsSlice = createSlice({
     setClockFontSize: (state, action: PayloadAction<number>) => {
       state.value.clockFontSize = action.payload
     },
+    setClockFormat: (state, action: PayloadAction<string>) => {
+      state.value.clockFormat = action.payload
+    },
     setClockPosition: (state, action: PayloadAction<ClockPosition>) => {
       state.value.clockPosition = action.payload
     },
-    setClockColor: (state, action: PayloadAction<string>) => {
-      state.value.clockColor = action.payload
+    setClockShadowHorizontal: (state, action: PayloadAction<number>) => {
+      state.value.clockShadowHorizontal = action.payload
+    },
+    setClockShadowVertical: (state, action: PayloadAction<number>) => {
+      state.value.clockShadowVertical = action.payload
+    },
+    setClockShadowBlur: (state, action: PayloadAction<number>) => {
+      state.value.clockShadowBlur = action.payload
     },
     setVideoFadeInOutTime: (state, action: PayloadAction<number>) => {
       state.value.videoFadeInOutTime = action.payload
@@ -50,11 +62,14 @@ const settingsSlice = createSlice({
 export const {
   setBalanceQueue,
   setClockBlinkStyle,
-  setClockFormat,
+  setClockColor,
   setClockFontFamily,
   setClockFontSize,
+  setClockFormat,
   setClockPosition,
-  setClockColor,
+  setClockShadowHorizontal,
+  setClockShadowVertical,
+  setClockShadowBlur,
   setVideoFadeInOutTime,
   setTimeBetweenVideos
 } = settingsSlice.actions;

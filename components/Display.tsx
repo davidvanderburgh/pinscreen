@@ -58,6 +58,7 @@ export const Display = () => {
               top: settings?.clockPosition === 'top' ? '0%' : undefined,
               bottom: settings?.clockPosition === 'bottom' ? '0%' : undefined,
               color: settings?.clockColor,
+              textShadow: `${settings?.clockShadowHorizontal}px ${settings?.clockShadowVertical}px ${settings?.clockShadowBlur}px black`
             }}
           >
             {hours}

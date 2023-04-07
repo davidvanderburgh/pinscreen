@@ -20,6 +20,9 @@ export type Settings = {
   clockFontSize: number
   clockPosition: ClockPosition
   clockColor: string
+  clockShadowHorizontal: number
+  clockShadowVertical: number
+  clockShadowBlur: number
   timeBetweenVideos: number
   videoFadeInOutTime: number
 }

@@ -25,6 +25,9 @@ import {
   setClockFontSize,
   setClockFormat,
   setClockPosition,
+  setClockShadowHorizontal,
+  setClockShadowVertical,
+  setClockShadowBlur,
   setTimeBetweenVideos,
   setVideoFadeInOutTime,
 } from '@/store/settings';
@@ -169,6 +172,18 @@ export const UI = ({open, onClose}: UIProps): ReactElement => {
   const handleClockFontSizeChange = (event: Event, value: number | number[]) => {
     dispatch(setClockFontSize(value as number))
   }
+
+  const handleClockShadowHorizontalChange = (event: Event, value: number | number[]) => {
+    dispatch(setClockShadowHorizontal(value as number))
+  }
+  
+  const handleClockShadowVerticalChange = (event: Event, value: number | number[]) => {
+    dispatch(setClockShadowVertical(value as number))
+  }  
+
+  const handleClockShadowBlurChange = (event: Event, value: number | number[]) => {
+    dispatch(setClockShadowBlur(value as number))
+  }
   
   const handleClockColorChange = (color: ColorResult) => {
     dispatch(setClockColor("#" + rgbHex(color.rgb.r, color.rgb.g, color.rgb.b, color.rgb.a)))
@@ -230,6 +245,7 @@ export const UI = ({open, onClose}: UIProps): ReactElement => {
             onChange={handleClockFormatChange}
           >
             <MenuItem value={'h:mm'}>h:mm (8:06)</MenuItem>
+            <MenuItem value={'h:mma'}>h:mma (8:06pm)</MenuItem>
             <MenuItem value={'h:mm:ss'}>h:mm:ss (8:06:48)</MenuItem>
             <MenuItem value={'h:mm:ssa'}>h:mm:ssa (8:06:48pm)</MenuItem>
             <MenuItem value={'hh:mm'}>hh:mm (08:06)</MenuItem>
@@ -277,6 +293,34 @@ export const UI = ({open, onClose}: UIProps): ReactElement => {
             valueLabelDisplay="auto"
             value={settings?.clockFontSize}
             onChange={handleClockFontSizeChange}
+          />
+          <InputLabel>clock shadow</InputLabel>
+          <InputLabel>horizontal</InputLabel>
+          <Slider
+            defaultValue={2}
+            min={-50}
+            max={50}
+            valueLabelDisplay="auto"
+            value={settings?.clockShadowHorizontal}
+            onChange={handleClockShadowHorizontalChange}
+          />
+          <InputLabel>vertical</InputLabel>
+          <Slider
+            defaultValue={2}
+            min={-50}
+            max={50}
+            valueLabelDisplay="auto"
+            value={settings?.clockShadowVertical}
+            onChange={handleClockShadowVerticalChange}
+          />
+          <InputLabel>blur</InputLabel>
+          <Slider
+            defaultValue={2}
+            min={0}
+            max={50}
+            valueLabelDisplay="auto"
+            value={settings?.clockShadowBlur}
+            onChange={handleClockShadowBlurChange}
           />
           <InputLabel>clock color and opacity</InputLabel>     
           <SketchPicker
