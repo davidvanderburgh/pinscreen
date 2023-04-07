@@ -19,6 +19,7 @@ import {
 import { useDispatch } from 'react-redux';
 import {
   setBalanceQueue,
+  setClockBlinkStyle,
   setClockColor,
   setClockFontFamily,
   setClockFontSize,
@@ -27,7 +28,7 @@ import {
   setTimeBetweenVideos,
   setVideoFadeInOutTime,
 } from '@/store/settings';
-import { ClockPosition, VideoDetails } from '@/types';
+import { BlinkStyle, ClockPosition, VideoDetails } from '@/types';
 import { useFontFamilies } from '@/hooks/useFontFamilies';
 import { useSettings } from '@/hooks/useSettings';
 import { ColorResult, SketchPicker } from 'react-color'
@@ -153,6 +154,10 @@ export const UI = ({open, onClose}: UIProps): ReactElement => {
     dispatch(setClockFormat(event.target.value as string));
   };
   
+  const handleClockBlinkStyleChange = (event: SelectChangeEvent) => {
+    dispatch(setClockBlinkStyle(event.target.value as BlinkStyle))
+  }
+
   const handleClockFontFamilyChange = (event: SelectChangeEvent) => {
     dispatch(setClockFontFamily(event.target.value as string))
   }
@@ -232,6 +237,15 @@ export const UI = ({open, onClose}: UIProps): ReactElement => {
             <MenuItem value={'hh:mm:ssa'}>hh:mm:ssa (08:06:48pm)</MenuItem>
             <MenuItem value={'HH:mm'}>HH:mm (20:06)</MenuItem>
             <MenuItem value={'HH:mm:ss'}>HH:mm:ss (20:06:48)</MenuItem>
+          </Select>
+          <InputLabel>clock colon blink animation</InputLabel>
+          <Select
+            value={settings?.blinkStyle}
+            onChange={handleClockBlinkStyleChange}
+          >
+            <MenuItem value={'smooth'}>smooth</MenuItem>
+            <MenuItem value={'sharp'}>sharp</MenuItem>
+            <MenuItem value={'none'}>none</MenuItem>
           </Select>
           <InputLabel>clock font</InputLabel>
           <Select

@@ -1,7 +1,6 @@
-import { Settings } from "@/types";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
-import { useSettings } from "./useSettings";
+import { useSettings } from "@/hooks/useSettings";
 
 export const useClock = () => {
   const { settings } = useSettings()

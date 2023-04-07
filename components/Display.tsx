@@ -7,8 +7,21 @@ import { UI } from "@/components/UI";
 import { useSettings } from "@/hooks/useSettings";
 import ReactPlayer from 'react-player'
 import { useVideoData } from '@/hooks/useVideoData';
+import { BlinkStyle } from '@/types';
 
 const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
+
+const Colon = ({ style }: { style: BlinkStyle}) => {
+  return (
+    <span className={
+      style === 'sharp'
+        ? styles.sharpColon
+        : style === 'smooth'
+        ? styles.smoothColon
+        : undefined
+    }>:</span>
+  )
+}
 
 export const Display = () => {
   const { settings } = useSettings()
@@ -16,6 +29,7 @@ export const Display = () => {
   const { data, queuePosition, nextVideo, endOfQueueKey} = useVideoData()
 
   const [uiOpen, setUiOpen] = useState<boolean>(false)
+  const [hours, minutes, seconds] = currentTime.split(':')
   
   const handleOpenUi = () => setUiOpen(true)
   const handleCloseUi = () => setUiOpen(false)
@@ -45,7 +59,12 @@ export const Display = () => {
               bottom: settings?.clockPosition === 'bottom' ? '0%' : undefined,
               color: settings?.clockColor,
             }}
-          >{currentTime}</span>
+          >
+            {hours}
+            <Colon key={seconds} style={settings?.blinkStyle} />
+            {minutes}
+            {seconds && (<><Colon key={seconds} style={settings?.blinkStyle}/>{seconds}</>)}
+          </span>
         }
         {data.length !== 0 &&
           <ReactPlayer

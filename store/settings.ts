@@ -1,8 +1,9 @@
-import { ClockPosition, Settings } from '@/types';
+import { BlinkStyle, ClockPosition, Settings } from '@/types';
 import { PayloadAction, Reducer, createSlice } from '@reduxjs/toolkit';
 
 const FIRST_TIME_SETTINGS: Settings = {
   balanceQueue: true,
+  blinkStyle: 'smooth',
   clockFormat: 'h:mm:ssa',
   clockFontFamily: 'arcade',
   clockFontSize: 12,
@@ -18,6 +19,9 @@ const settingsSlice = createSlice({
   reducers: {
     setBalanceQueue: (state, action: PayloadAction<boolean>) => {
       state.value.balanceQueue = action.payload
+    },
+    setClockBlinkStyle: (state, action: PayloadAction<BlinkStyle>) => {
+      state.value.blinkStyle = action.payload
     },
     setClockFormat: (state, action: PayloadAction<string>) => {
       state.value.clockFormat = action.payload
@@ -45,6 +49,7 @@ const settingsSlice = createSlice({
 
 export const {
   setBalanceQueue,
+  setClockBlinkStyle,
   setClockFormat,
   setClockFontFamily,
   setClockFontSize,

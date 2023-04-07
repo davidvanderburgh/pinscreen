@@ -2,7 +2,7 @@ import { VideoFile } from "@/types"
 import axios from "axios"
 import dayjs from "dayjs"
 import { useCallback, useEffect, useState } from "react"
-import { useSettings } from "./useSettings"
+import { useSettings } from "@/hooks/useSettings"
 
 export const useVideoData = () => {
   const [data, setData] = useState<VideoFile[]>([])

@@ -13,6 +13,41 @@
   .clock {
     z-index: 1;
     position: absolute;
+
+    .smoothColon {
+      animation: smoothBlink 1s infinite;
+      -webkit-animation: smoothBlink 1s infinite;
+    }
+    @keyframes smoothBlink {
+      0% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0;
+      }
+    }
+
+    .sharpColon {
+      animation: sharpBlink 1s infinite;
+      -webkit-animation: sharpBlink 1s infinite;
+    }
+    @keyframes sharpBlink {
+      0% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 1;
+      }
+      51% {
+        opacity: 0;
+      }
+      100% {
+        opacity: 0;
+      }
+    }
   }
 
   video {
