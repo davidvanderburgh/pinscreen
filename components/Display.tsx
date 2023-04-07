@@ -26,7 +26,7 @@ const Colon = ({ style }: { style: BlinkStyle}) => {
 export const Display = () => {
   const { settings } = useSettings()
   const { currentTime } = useClock()
-  const { data, queuePosition, nextVideo, endOfQueueKey} = useVideoData()
+  const { data: videoData, queuePosition, nextVideo, endOfQueueKey, resync} = useVideoData()
 
   const [uiOpen, setUiOpen] = useState<boolean>(false)
   const [hours, minutes, seconds] = currentTime.split(':')
@@ -35,8 +35,8 @@ export const Display = () => {
   const handleCloseUi = () => setUiOpen(false)
 
   const srcFileName = useMemo(() => 
-    data[queuePosition]?.fileName ?? ''
-  , [queuePosition, data])
+    videoData[queuePosition]?.fileName ?? ''
+  , [queuePosition, videoData])
 
   const onVideoEnded = useCallback(async () => {
     $('#video').fadeOut(settings?.videoFadeInOutTime ?? 0)
@@ -67,7 +67,7 @@ export const Display = () => {
             {seconds && (<><Colon key={seconds} style={settings?.blinkStyle}/>{seconds}</>)}
           </span>
         }
-        {data.length !== 0 &&
+        {videoData.length !== 0 &&
           <ReactPlayer
             key={endOfQueueKey}
             id='video'
@@ -80,7 +80,7 @@ export const Display = () => {
           />
         }
       </section>
-      <UI open={uiOpen} onClose={handleCloseUi} />
+      <UI open={uiOpen} onClose={handleCloseUi} videoData={videoData} resync={resync} />
     </>
   );
 };

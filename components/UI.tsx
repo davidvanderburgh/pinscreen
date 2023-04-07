@@ -31,7 +31,7 @@ import {
   setTimeBetweenVideos,
   setVideoFadeInOutTime,
 } from '@/store/settings';
-import { BlinkStyle, ClockPosition, VideoDetails } from '@/types';
+import { BlinkStyle, ClockPosition, VideoDetails, VideoFile } from '@/types';
 import { useFontFamilies } from '@/hooks/useFontFamilies';
 import { useSettings } from '@/hooks/useSettings';
 import { ColorResult, SketchPicker } from 'react-color'
@@ -121,11 +121,12 @@ const FileDetailsModal = () => {
 
 type UIProps = {
   open: boolean
+  videoData: VideoFile[]
+  resync: () => Promise<void>
   onClose?: ((event: {}, reason: "backdropClick" | "escapeKeyDown") => void) | undefined
 }
 
-export const UI = ({open, onClose}: UIProps): ReactElement => {
-  const { data: videoData, resync } = useVideoData()
+export const UI = ({ open, videoData, resync, onClose }: UIProps): ReactElement => {
   const { settings } = useSettings()
   const { fontFamilies } = useFontFamilies()
   const dispatch: RootDispatch = useDispatch();
