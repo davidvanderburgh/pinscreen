@@ -29,6 +29,7 @@ export const Display = () => {
   const { data: videoData, queuePosition, nextVideo, endOfQueueKey, resync} = useVideoData()
 
   const [uiOpen, setUiOpen] = useState<boolean>(false)
+  const [videoIsPlaying, setVideoIsPlaying] = useState<boolean>(true)
   const [hours, minutes, seconds] = currentTime.split(':')
   
   const handleOpenUi = () => setUiOpen(true)
@@ -38,18 +39,29 @@ export const Display = () => {
     videoData[queuePosition]?.fileName ?? ''
   , [queuePosition, videoData])
 
+  const showClock = useMemo(() =>
+    settings?.alwaysShowClock === false
+      ? !videoIsPlaying
+      : true
+  , [settings?.alwaysShowClock, videoIsPlaying])
+
   const onVideoEnded = useCallback(async () => {
     $('#video').fadeOut(settings?.videoFadeInOutTime ?? 0)
     await delay(settings?.videoFadeInOutTime ?? 0)
+    setVideoIsPlaying(false)
     await delay((settings?.timeBetweenVideos ?? 0) * 1000)
     await nextVideo()
     $('#video').fadeIn(settings?.videoFadeInOutTime ?? 0)
   }, [nextVideo, settings?.timeBetweenVideos, settings?.videoFadeInOutTime])
 
+  const onVideoStart = () => {
+    setVideoIsPlaying(true)
+  }
+
   return (
     <>
       <section className={styles.showcase} onClick={handleOpenUi}>
-        {settings &&
+        {showClock && settings &&
           <span id="clock"
             className={styles.clock}
             style={{
@@ -73,6 +85,7 @@ export const Display = () => {
             id='video'
             url={srcFileName}
             muted
+            onStart={onVideoStart}
             onEnded={onVideoEnded}
             controls={false}
             playing

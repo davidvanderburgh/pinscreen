@@ -2,6 +2,7 @@ import { BlinkStyle, ClockPosition, Settings } from '@/types';
 import { PayloadAction, Reducer, createSlice } from '@reduxjs/toolkit';
 
 const FIRST_TIME_SETTINGS: Settings = {
+  alwaysShowClock: true,
   balanceQueue: true,
   blinkStyle: 'smooth',
   clockColor: '#FFF',
@@ -20,6 +21,9 @@ const settingsSlice = createSlice({
   name: 'settings',
   initialState: { value: FIRST_TIME_SETTINGS},
   reducers: {
+    setAlwaysShowClock: (state, action: PayloadAction<boolean>) => {
+      state.value.alwaysShowClock = action.payload
+    },
     setBalanceQueue: (state, action: PayloadAction<boolean>) => {
       state.value.balanceQueue = action.payload
     },
@@ -60,6 +64,7 @@ const settingsSlice = createSlice({
 });
 
 export const {
+  setAlwaysShowClock,
   setBalanceQueue,
   setClockBlinkStyle,
   setClockColor,

@@ -15,6 +15,9 @@ import {
   Slider,
   SxProps,
   Tooltip,
+  ToggleButton,
+  Stack,
+  Switch,
 } from "@mui/material";
 import { useDispatch } from 'react-redux';
 import {
@@ -30,13 +33,13 @@ import {
   setClockShadowBlur,
   setTimeBetweenVideos,
   setVideoFadeInOutTime,
+  setAlwaysShowClock,
 } from '@/store/settings';
 import { BlinkStyle, ClockPosition, VideoDetails, VideoFile } from '@/types';
 import { useFontFamilies } from '@/hooks/useFontFamilies';
 import { useSettings } from '@/hooks/useSettings';
 import { ColorResult, SketchPicker } from 'react-color'
 import rgbHex from "rgb-hex";
-import { useVideoData } from '@/hooks/useVideoData';
 import { RootDispatch } from '@/store';
 import axios from 'axios';
 import Accordion from '@mui/material/Accordion';
@@ -146,6 +149,10 @@ export const UI = ({ open, videoData, resync, onClose }: UIProps): ReactElement 
     dispatch(setBalanceQueue(checked))
   }
 
+  const handleAlwaysShowClock = (event: ChangeEvent<HTMLInputElement>, checked: boolean) => {
+    dispatch(setAlwaysShowClock(checked))
+  }
+
   const handleVideoFadeInOutTimeChange = (event: Event | SyntheticEvent<Element, Event>, value: number | number[]) => {
     dispatch(setVideoFadeInOutTime(value as number))
   }
@@ -220,6 +227,15 @@ export const UI = ({ open, videoData, resync, onClose }: UIProps): ReactElement 
                 label="Balance video queue" />
             </Tooltip>
           </FormGroup>
+          <InputLabel>show clock during videos</InputLabel>
+          <Stack direction="row" spacing={1} alignItems="center">
+            <Typography>Off</Typography>
+              <Switch
+                checked={settings?.alwaysShowClock}
+                onChange={handleAlwaysShowClock}
+              />
+            <Typography>On</Typography>
+          </Stack>
           <InputLabel>video fade in/out time (ms)</InputLabel>
           <Slider
             defaultValue={200}

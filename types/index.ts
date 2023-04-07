@@ -13,6 +13,7 @@ export type ClockPosition = 'top' | 'bottom' | 'center'
 export type BlinkStyle = 'smooth' | 'sharp' | 'none'
 
 export type Settings = {
+  alwaysShowClock: boolean
   balanceQueue: boolean
   blinkStyle: BlinkStyle
   clockFormat: string
