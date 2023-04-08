@@ -348,7 +348,7 @@ export const UI = ({ open, videoData, resync, onClose }: UIProps): ReactElement 
       </Modal>
       <Toast open={toastOpen} onFinish={() => setToastOpen(false)}>
         <>
-          {videoData.length} files detected
+          {videoData.length} files queued
         </>
       </Toast>
     </>
