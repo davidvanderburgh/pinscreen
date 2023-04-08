@@ -298,8 +298,8 @@ export const UI = ({ open, videoData, resync, onClose }: UIProps): ReactElement 
             value={settings?.clockPosition}
             onChange={handleClockPositionChange}
           >
-            <MenuItem value={'center'}>center</MenuItem>
             <MenuItem value={'top'}>top</MenuItem>
+            <MenuItem value={'center'}>center</MenuItem>
             <MenuItem value={'bottom'}>bottom</MenuItem>
           </Select>
           <InputLabel>clock size</InputLabel>

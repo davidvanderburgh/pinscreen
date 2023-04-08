@@ -11,7 +11,7 @@ import { BlinkStyle } from '@/types';
 
 const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
-const Colon = ({ style }: { style: BlinkStyle}) => {
+const Colon = ({ style }: { style?: BlinkStyle}) => {
   return (
     <span className={
       style === 'sharp'
@@ -42,8 +42,10 @@ export const Display = () => {
   const showClock = useMemo(() =>
     settings?.alwaysShowClock === false
       ? !videoIsPlaying
-      : true
-  , [settings?.alwaysShowClock, videoIsPlaying])
+      : hours
+      ? true
+      : false
+  , [hours, settings?.alwaysShowClock, videoIsPlaying])
 
   const onVideoEnded = useCallback(async () => {
     $('#video').fadeOut(settings?.videoFadeInOutTime ?? 0)
@@ -61,7 +63,7 @@ export const Display = () => {
   return (
     <>
       <section className={styles.showcase} onClick={handleOpenUi}>
-        {showClock && settings &&
+        {showClock &&
           <span id="clock"
             className={styles.clock}
             style={{
