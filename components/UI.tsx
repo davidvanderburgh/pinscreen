@@ -1,23 +1,6 @@
 import styles from '@/styles/ui.module.scss'
 
 import { ChangeEvent, ReactElement, SyntheticEvent, useEffect, useState } from 'react';
-import {
-  Box,
-  Button,
-  Checkbox,
-  InputLabel,
-  FormGroup,
-  FormControlLabel,
-  MenuItem,
-  Modal,
-  Select,
-  SelectChangeEvent,
-  Slider,
-  SxProps,
-  Tooltip,
-  Stack,
-  Switch,
-} from "@mui/material";
 import { useDispatch } from 'react-redux';
 import {
   setBalanceQueue,
@@ -47,6 +30,20 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Toast } from '@/components/Toast';
+import { SxProps } from '@mui/material/styles';
+import Button from '@mui/material/Button';
+import Modal from '@mui/material/Modal';
+import Box from '@mui/material/Box';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+import Tooltip from '@mui/material/Tooltip';
+import InputLabel from '@mui/material/InputLabel';
+import FormGroup from '@mui/material/FormGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
+import Stack from '@mui/material/Stack';
+import Switch from '@mui/material/Switch';
+import Slider from '@mui/material/Slider';
+import MenuItem from '@mui/material/MenuItem';
 
 const modalSx: SxProps = {
   color: 'black',
