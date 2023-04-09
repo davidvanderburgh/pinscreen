@@ -92,6 +92,8 @@ export const Display = () => {
             controls={false}
             playing
             onError={nextVideo}
+            height='100%'
+            width='100%'
           />
         }
       </section>
