@@ -1,6 +1,12 @@
 ## Getting Started
 
 ```bash
+install git 
+git clone https://github.com/davidvanderburgh/pinscreen.git
+
+install node
+install yarn
+
 yarn build
 yarn start
 ```
