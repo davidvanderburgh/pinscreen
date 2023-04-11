@@ -132,10 +132,6 @@ export const UI = ({ open, videoData, resync, onClose }: UIProps): ReactElement 
 
   const [toastOpen, setToastOpen] = useState(false);
 
-  const handleFileImport = async () => {
-    console.log('tbd')
-  }
-
   const handleResyncVideoList = async () => {
     await resync()
     setToastOpen(true)
@@ -209,7 +205,6 @@ export const UI = ({ open, videoData, resync, onClose }: UIProps): ReactElement 
           <Tooltip title='a new random queue is generated once alls files have been played through'>
             <InputLabel>{videoData.length} videos queued</InputLabel>
           </Tooltip>
-          <Button onClick={handleFileImport}>import videos</Button>
           <Button onClick={handleResyncVideoList}>re-sync video list</Button>
           <FileDetailsModal />
           <FormGroup>
