@@ -26,6 +26,11 @@ public
     |-...
 *  After adding video files, a fresh `yarn start` should refresh the queue. You can check detected files in the on-screen-display under `FILE DETAILS`
 
+Adding fonts:
+* download your font in .ttf format
+* make a folder with your font name in `styles/fonts/` and put your font there
+* edit the `font-definitions.scss` in `styles` to register your font (copy how other fonts are done)
+
 Startup (Windows):
 1. press windows key + r
 2. type: `shell:startup`
