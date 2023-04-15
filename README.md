@@ -12,7 +12,7 @@ yarn start
 ```
 
 Adding video files:
-* Video files go in the `public/videos` folder and should be organized by game folder.
+* Video files go in the `public/videos` folder and should be organized by game folder OR if you edit the `.env` file (follow directions there), you can have them on a thumb drive or any other directory that your computer can see
 ** Example: 
 public
 |-videos
