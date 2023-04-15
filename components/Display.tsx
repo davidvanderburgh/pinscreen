@@ -85,7 +85,7 @@ export const Display = () => {
           <ReactPlayer
             key={endOfQueueKey}
             id='video'
-            url={srcFileName}
+            url={`api/getVideoStream?filePath=${srcFileName}`}
             muted
             onStart={onVideoStart}
             onEnded={onVideoEnded}
