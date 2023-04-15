@@ -9,7 +9,9 @@ const getVideoFiles = async (): Promise<VideoFile[]> => {
     return videoFilesCache
   }
   const videoFiles: VideoFile[] = []
-  for await (const file of getFiles('public/videos')) {
+  const videoFilesDirectory: string = process.env.VIDEOS_FOLDER_LOCATION || 'public/videos'
+  console.log('reading files from', videoFilesDirectory)
+  for await (const file of getFiles(videoFilesDirectory)) {
     const videoFileName: string = getPublicVideosPath(file)
     if (videoFileName.endsWith('.mp4')) {
       videoFiles.push({
