@@ -7,6 +7,6 @@ services:
       dockerfile: Dockerfile
     image: pinscreen:latest
     volumes:
-      - /Users/justin/Desktop/pinscreen:/public
+      - {{path_to_images}}:/public
     ports:
       - 3000:3000
