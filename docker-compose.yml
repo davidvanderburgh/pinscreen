@@ -1,0 +1,12 @@
+version: '3'
+
+services:
+  pinscreen:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: pinscreen:latest
+    volumes:
+      - {{path_to_images}}:/public
+    ports:
+      - 3000:3000
