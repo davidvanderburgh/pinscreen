@@ -1,6 +1,6 @@
 import styles from '@/styles/display.module.scss'
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import $ from 'jquery'
 import { useClock } from "@/hooks/useClock";
 import { UI } from "@/components/UI";
@@ -8,6 +8,7 @@ import { useSettings } from "@/hooks/useSettings";
 import ReactPlayer from 'react-player'
 import { useVideoData } from '@/hooks/useVideoData';
 import { BlinkStyle } from '@/types';
+import { usePrevious } from '@/hooks/usePrevious';
 
 const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
@@ -35,11 +36,13 @@ export const Display = () => {
   const handleOpenUi = () => setUiOpen(true)
   const handleCloseUi = () => setUiOpen(false)
 
-  const srcFileName = useMemo(() => 
+  const srcFileName: string | undefined = useMemo(() => 
     videoData[queuePosition]?.fileName ?? ''
   , [queuePosition, videoData])
 
-  const showClock = useMemo(() =>
+  const previousSrcFileName: string | undefined = usePrevious(srcFileName)
+
+  const showClock: boolean = useMemo(() =>
     settings?.alwaysShowClock === false
       ? !videoIsPlaying
       : hours
@@ -60,6 +63,13 @@ export const Display = () => {
     setVideoIsPlaying(true)
   }
 
+  const limitPlayback = async (duration: number): Promise<void> => {
+    await delay(duration*1000 + (1 + (settings?.timeBetweenVideos ?? 0))*1000)
+
+    if (srcFileName === previousSrcFileName) {
+      await nextVideo()
+    }
+  }
   return (
     <>
       <section className={styles.showcase} onClick={handleOpenUi}>
@@ -94,6 +104,7 @@ export const Display = () => {
             onError={nextVideo}
             height='100%'
             width='100%'
+            onDuration={limitPlayback}
           />
         }
       </section>
