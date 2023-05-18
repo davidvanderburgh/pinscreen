@@ -11,7 +11,7 @@ export const useVideoData = () => {
   const { settings } = useSettings()
 
   const refresh = useCallback(async (): Promise<void> => {
-    setData((await axios.get<VideoFile[]>(`/api/getVideo?balanceQueue=${settings?.balanceQueue ? `&balanceQueue=${settings.balanceQueue}` : ''}`)).data)
+    setData((await axios.get<VideoFile[]>(`/api/getVideo${settings?.balanceQueue ? `?balanceQueue=${settings.balanceQueue}` : ''}`)).data)
   }, [settings?.balanceQueue])
 
   const resync = useCallback(async(): Promise<void> => {
