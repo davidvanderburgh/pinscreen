@@ -63,13 +63,11 @@ export const Display = () => {
     setVideoIsPlaying(true)
   }
 
-  const limitPlayback = async (duration: number): Promise<void> => {
-    await delay(duration*1000 + (5 + (settings?.timeBetweenVideos ?? 0))*1000)
-
-    if (srcFileName === previousSrcFileName) {
-      await resync()
-    }
+  const onError = async (error: any, data?: any, hlsInstance?: any, hlsGlobal?: any) => {
+    console.error({error, data, hlsInstance, hlsGlobal})
+    await resync()
   }
+
   return (
     <>
       <section className={styles.showcase} onClick={handleOpenUi}>
@@ -101,10 +99,9 @@ export const Display = () => {
             onEnded={onVideoEnded}
             controls={false}
             playing
-            onError={resync}
+            onError={onError}
             height='100%'
             width='100%'
-            onDuration={limitPlayback}
           />
         }
       </section>
