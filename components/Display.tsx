@@ -10,6 +10,7 @@ import { useVideoData } from '@/hooks/useVideoData';
 import { BlinkStyle } from '@/types';
 import { usePrevious } from '@/hooks/usePrevious';
 import { OnProgressProps } from 'react-player/base';
+import dayjs from 'dayjs';
 
 const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
@@ -33,7 +34,8 @@ export const Display = () => {
   const [uiOpen, setUiOpen] = useState<boolean>(false)
   const [videoIsPlaying, setVideoIsPlaying] = useState<boolean>(true)
   const [hours, minutes, seconds] = currentTime.split(':')
-  
+  const [heartBeat, setHeartBeat] = useState<Date>(new Date())
+
   const handleOpenUi = () => setUiOpen(true)
   const handleCloseUi = () => setUiOpen(false)
 
@@ -69,23 +71,20 @@ export const Display = () => {
     await resync()
   }
 
-  const limitPlayback = async (duration: number): Promise<void> => {
-    console.log({duration})
-    await delay(duration*1000 + (1 + (settings?.timeBetweenVideos ?? 0))*1000)
+  const onProgress = (progress: OnProgressProps) => {
+    setHeartBeat(new Date())
+  }
 
-    if (srcFileName === previousSrcFileName) {
-      console.log('limit playback resync')
+  const isDead = useMemo((): boolean => 
+    dayjs(heartBeat).add(1 + (settings?.timeBetweenVideos ?? 0)*1000, 'second').isBefore(new Date())
+  , [heartBeat, settings?.timeBetweenVideos])
+
+  setInterval(async () => {
+    if (isDead) {
+      console.log('dead, restarting')
       await resync()
     }
-  }
-
-  const onProgress = (progress: OnProgressProps) => {
-    console.log({...progress})
-  }
-
-  const onPause = async () => {
-    console.log('paused')
-  }
+  }, 1000)
 
   return (
     <>
@@ -116,15 +115,11 @@ export const Display = () => {
             muted
             onStart={onVideoStart}
             onEnded={onVideoEnded}
-            controls={true}
             playing
             onError={onError}
             onProgress={onProgress}
-            onDuration={limitPlayback}
-            onPause={onPause}
             height='100%'
             width='100%'
-            
           />
         }
       </section>
