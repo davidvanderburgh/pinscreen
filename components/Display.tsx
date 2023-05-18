@@ -64,10 +64,10 @@ export const Display = () => {
   }
 
   const limitPlayback = async (duration: number): Promise<void> => {
-    await delay(duration*1000 + (1 + (settings?.timeBetweenVideos ?? 0))*1000)
+    await delay(duration*1000 + (5 + (settings?.timeBetweenVideos ?? 0))*1000)
 
     if (srcFileName === previousSrcFileName) {
-      await nextVideo()
+      await resync()
     }
   }
   return (
@@ -101,7 +101,7 @@ export const Display = () => {
             onEnded={onVideoEnded}
             controls={false}
             playing
-            onError={nextVideo}
+            onError={resync}
             height='100%'
             width='100%'
             onDuration={limitPlayback}

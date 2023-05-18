@@ -4,7 +4,7 @@ import { getFiles, getPublicVideosPath } from "@/utilities";
 
 const getVideoDetailsFromFiles = async (): Promise<VideoDetails[]> => {
   const videoDetails: Record<string, string[]> = {}
-  for await (const file of getFiles('public/videos')) {
+  for await (const file of getFiles(process.env.VIDEOS_FOLDER_LOCATION ?? 'public/videos')) {
     const videoFileName: string = getPublicVideosPath(file)
     if (videoFileName.endsWith('.mp4')) {
       const game: string = (videoFileName.match(/(?<=(\/|\\))(.*?)(?=(\/|\\))/) ?? ['no game'])[0]
