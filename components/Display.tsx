@@ -9,6 +9,7 @@ import ReactPlayer from 'react-player'
 import { useVideoData } from '@/hooks/useVideoData';
 import { BlinkStyle } from '@/types';
 import { usePrevious } from '@/hooks/usePrevious';
+import { OnProgressProps } from 'react-player/base';
 
 const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
@@ -68,6 +69,24 @@ export const Display = () => {
     await resync()
   }
 
+  const limitPlayback = async (duration: number): Promise<void> => {
+    console.log({duration})
+    await delay(duration*1000 + (1 + (settings?.timeBetweenVideos ?? 0))*1000)
+
+    if (srcFileName === previousSrcFileName) {
+      console.log('limit playback resync')
+      await resync()
+    }
+  }
+
+  const onProgress = (progress: OnProgressProps) => {
+    console.log({...progress})
+  }
+
+  const onPause = async () => {
+    console.log('paused')
+  }
+
   return (
     <>
       <section className={styles.showcase} onClick={handleOpenUi}>
@@ -97,11 +116,15 @@ export const Display = () => {
             muted
             onStart={onVideoStart}
             onEnded={onVideoEnded}
-            controls={false}
+            controls={true}
             playing
             onError={onError}
+            onProgress={onProgress}
+            onDuration={limitPlayback}
+            onPause={onPause}
             height='100%'
             width='100%'
+            
           />
         }
       </section>
