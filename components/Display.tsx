@@ -79,12 +79,17 @@ export const Display = () => {
     dayjs(heartBeat).add(1 + (settings?.timeBetweenVideos ?? 0)*1000, 'second').isBefore(new Date())
   , [heartBeat, settings?.timeBetweenVideos])
 
-  setInterval(async () => {
-    if (isDead) {
-      console.log('dead, restarting')
-      await resync()
+  useEffect(() => {
+    const deathCheckTimer = setInterval(async () => {
+      if (isDead) {
+        console.log('woops I died, restarting')
+        await resync()
+      }
+    }, 1000)
+    return () => {
+      clearInterval(deathCheckTimer)
     }
-  }, 1000)
+  }, [isDead, resync])
 
   return (
     <>
