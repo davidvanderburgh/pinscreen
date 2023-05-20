@@ -8,7 +8,6 @@ import { useSettings } from "@/hooks/useSettings";
 import ReactPlayer from 'react-player'
 import { useVideoData } from '@/hooks/useVideoData';
 import { BlinkStyle } from '@/types';
-import { usePrevious } from '@/hooks/usePrevious';
 import { OnProgressProps } from 'react-player/base';
 import dayjs from 'dayjs';
 
@@ -34,7 +33,7 @@ export const Display = () => {
   const [uiOpen, setUiOpen] = useState<boolean>(false)
   const [videoIsPlaying, setVideoIsPlaying] = useState<boolean>(true)
   const [hours, minutes, seconds] = currentTime.split(':')
-  const [heartBeat, setHeartBeat] = useState<Date>(new Date())
+  const [heartBeat, setHeartBeat] = useState<dayjs.Dayjs>(dayjs())
 
   const handleOpenUi = () => setUiOpen(true)
   const handleCloseUi = () => setUiOpen(false)
@@ -42,8 +41,6 @@ export const Display = () => {
   const srcFileName: string | undefined = useMemo(() => 
     videoData[queuePosition]?.fileName ?? ''
   , [queuePosition, videoData])
-
-  const previousSrcFileName: string | undefined = usePrevious(srcFileName)
 
   const showClock: boolean = useMemo(() =>
     settings?.alwaysShowClock === false
@@ -72,15 +69,12 @@ export const Display = () => {
   }
 
   const onProgress = (progress: OnProgressProps) => {
-    setHeartBeat(new Date())
+    setHeartBeat(dayjs())
   }
-
-  const isDead = useMemo((): boolean => 
-    dayjs(heartBeat).add(1 + (settings?.timeBetweenVideos ?? 0)*1000, 'second').isBefore(new Date())
-  , [heartBeat, settings?.timeBetweenVideos])
 
   useEffect(() => {
     const deathCheckTimer = setInterval(async () => {
+      const isDead = heartBeat.add(1 + (settings?.timeBetweenVideos ?? 0), 'seconds').isBefore(dayjs(), 'seconds')
       if (isDead) {
         console.log('woops I died, restarting')
         await resync()
@@ -89,7 +83,7 @@ export const Display = () => {
     return () => {
       clearInterval(deathCheckTimer)
     }
-  }, [isDead, resync])
+  }, [heartBeat, resync, settings?.timeBetweenVideos])
 
   return (
     <>
