@@ -74,16 +74,16 @@ export const Display = () => {
 
   useEffect(() => {
     const deathCheckTimer = setInterval(async () => {
-      const isDead = heartBeat.add(1 + (settings?.timeBetweenVideos ?? 0), 'seconds').isBefore(dayjs(), 'seconds')
+      const isDead = heartBeat.add(5 + (settings?.timeBetweenVideos ?? 0), 'seconds').isBefore(dayjs(), 'seconds')
       if (isDead) {
-        console.log('woops I died, restarting')
+        console.log('woops I died, restarting', srcFileName, new Date())
         await resync()
       }
     }, 1000)
     return () => {
       clearInterval(deathCheckTimer)
     }
-  }, [heartBeat, resync, settings?.timeBetweenVideos])
+  }, [heartBeat, resync, settings?.timeBetweenVideos, srcFileName])
 
   return (
     <>
