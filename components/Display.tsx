@@ -11,6 +11,8 @@ import { BlinkStyle } from '@/types';
 import { OnProgressProps } from 'react-player/base';
 import dayjs from 'dayjs';
 
+const TIME_TO_PRONOUNCE_DEAD_IN_SECONDS = 30
+
 const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
 const Colon = ({ style }: { style?: BlinkStyle}) => {
@@ -30,6 +32,7 @@ export const Display = () => {
   const { currentTime } = useClock()
   const { data: videoData, queuePosition, nextVideo, endOfQueueKey, resync} = useVideoData()
 
+  const [ready, setReady] = useState<boolean>(false)
   const [uiOpen, setUiOpen] = useState<boolean>(false)
   const [videoIsPlaying, setVideoIsPlaying] = useState<boolean>(true)
   const [hours, minutes, seconds] = currentTime.split(':')
@@ -38,8 +41,10 @@ export const Display = () => {
   const handleOpenUi = () => setUiOpen(true)
   const handleCloseUi = () => setUiOpen(false)
 
-  const srcFileName: string | undefined = useMemo(() => 
-    videoData[queuePosition]?.fileName ?? ''
+  const videoUrl: string = useMemo(() => 
+    videoData[queuePosition]?.fileName
+      ? `api/getVideoStream?filePath=${videoData[queuePosition]?.fileName}`
+      : ''
   , [queuePosition, videoData])
 
   const showClock: boolean = useMemo(() =>
@@ -54,6 +59,7 @@ export const Display = () => {
     $('#video').fadeOut(settings?.videoFadeInOutTime ?? 0)
     await delay(settings?.videoFadeInOutTime ?? 0)
     setVideoIsPlaying(false)
+    setReady(false)
     await delay((settings?.timeBetweenVideos ?? 0) * 1000)
     await nextVideo()
     $('#video').fadeIn(settings?.videoFadeInOutTime ?? 0)
@@ -65,25 +71,29 @@ export const Display = () => {
 
   const onError = async (error: any, data?: any, hlsInstance?: any, hlsGlobal?: any) => {
     console.error({error, data, hlsInstance, hlsGlobal})
-    await resync()
   }
 
-  const onProgress = (progress: OnProgressProps) => {
+  const onProgress = (_progress: OnProgressProps) => {
     setHeartBeat(dayjs())
   }
 
+  const onReady = () => {
+    console.log('player is ready')
+    setReady(true)
+  }
+
   useEffect(() => {
-    const deathCheckTimer = setInterval(async () => {
-      const isDead = heartBeat.add(5 + (settings?.timeBetweenVideos ?? 0), 'seconds').isBefore(dayjs(), 'seconds')
-      if (isDead) {
-        console.log('woops I died, restarting', srcFileName, new Date())
-        await resync()
-      }
-    }, 1000)
-    return () => {
-      clearInterval(deathCheckTimer)
+    const isDead = heartBeat.add(
+      TIME_TO_PRONOUNCE_DEAD_IN_SECONDS + 
+      (settings?.timeBetweenVideos ?? 0), 'seconds').isBefore(dayjs(), 'seconds'
+    )
+    if (isDead) {
+      console.log('woops I died, restarting', videoUrl, new Date())
+      resync()
+      console.log('alive again')
     }
-  }, [heartBeat, resync, settings?.timeBetweenVideos, srcFileName])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentTime])
 
   return (
     <>
@@ -110,11 +120,12 @@ export const Display = () => {
           <ReactPlayer
             key={endOfQueueKey}
             id='video'
-            url={`api/getVideoStream?filePath=${srcFileName}`}
+            url={videoUrl}
             muted
             onStart={onVideoStart}
             onEnded={onVideoEnded}
-            playing
+            onReady={onReady}
+            playing={ready}
             onError={onError}
             onProgress={onProgress}
             height='100%'
