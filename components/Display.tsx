@@ -10,7 +10,6 @@ import { useVideoData } from '@/hooks/useVideoData';
 import { BlinkStyle } from '@/types';
 import { OnProgressProps } from 'react-player/base';
 import dayjs from 'dayjs';
-import { useRouter } from 'next/router';
 
 const TIME_TO_PRONOUNCE_DEAD_IN_SECONDS = 30
 
@@ -32,7 +31,6 @@ export const Display = () => {
   const { settings } = useSettings()
   const { currentTime } = useClock()
   const { data: videoData, queuePosition, nextVideo, endOfQueueKey, resync} = useVideoData()
-  const router = useRouter()
 
   const [ready, setReady] = useState<boolean>(false)
   const [uiOpen, setUiOpen] = useState<boolean>(false)
@@ -72,8 +70,7 @@ export const Display = () => {
   }
 
   const onError = async (error: any, data?: any, hlsInstance?: any, hlsGlobal?: any) => {
-    console.error('pinscreen error', {error, data, hlsInstance, hlsGlobal})
-    router.reload()
+    console.error({error, data, hlsInstance, hlsGlobal})
   }
 
   const onProgress = (_progress: OnProgressProps) => {
