@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next"
 import { VideoFile } from "@/types";
-import { getFiles, getPublicVideosPath, shuffleArray } from "@/utilities";
+import { getFiles, shuffleArray } from "@/utilities";
+import { basename, dirname } from "path";
 
 let videoFilesCache: VideoFile[] = [] 
 
@@ -11,15 +12,22 @@ const getVideoFiles = async (): Promise<VideoFile[]> => {
   const videoFiles: VideoFile[] = []
   const videoFilesDirectory: string = process.env.VIDEOS_FOLDER_LOCATION ?? 'public/videos'
   console.log('reading files from', videoFilesDirectory)
-  for await (const file of getFiles(videoFilesDirectory)) {
-    const videoFileName: string = getPublicVideosPath(file)
-    if (videoFileName.endsWith('.mp4')) {
-      videoFiles.push({
-        game: (videoFileName.match(/(?<=(\/|\\))(.*?)(?=(\/|\\))/) ?? ['no game'])[0],
-        fileName: `${videoFilesDirectory === 'public/videos' ? '' : videoFilesDirectory}${videoFileName}`,
-      })
+
+  for await (const fileAbsolutePath of getFiles(videoFilesDirectory)) {
+    if (!fileAbsolutePath.toLowerCase().endsWith('.mp4')) {
+      continue
     }
+
+    const parentDirectory: string = basename(dirname(fileAbsolutePath))
+    const game: string = parentDirectory || 'no game'
+
+    videoFiles.push({
+      // Use absolute filesystem path for reliable streaming
+      fileName: fileAbsolutePath,
+      game,
+    })
   }
+
   videoFilesCache = videoFiles
   return videoFiles
 }

@@ -43,7 +43,7 @@ export const Display = () => {
 
   const videoUrl: string = useMemo(() => 
     videoData[queuePosition]?.fileName
-      ? `api/getVideoStream?filePath=${videoData[queuePosition]?.fileName}`
+      ? `api/getVideoStream?filePath=${encodeURIComponent(videoData[queuePosition].fileName)}`
       : ''
   , [queuePosition, videoData])
 
@@ -71,6 +71,12 @@ export const Display = () => {
 
   const onError = async (error: any, data?: any, hlsInstance?: any, hlsGlobal?: any) => {
     console.error({error, data, hlsInstance, hlsGlobal})
+    // Attempt to skip the bad video immediately to avoid a stall
+    try {
+      await nextVideo()
+    } catch (e) {
+      console.error('failed to skip to next video after error', e)
+    }
   }
 
   const onProgress = (_progress: OnProgressProps) => {
