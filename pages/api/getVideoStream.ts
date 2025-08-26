@@ -29,6 +29,19 @@ const getVideoStream = async (
       }
 
       res.writeHead(206, head)
+      const cleanup = () => {
+        file.destroy()
+        res.removeListener('close', cleanup)
+        res.removeListener('error', cleanup)
+        req.removeListener('aborted', cleanup)
+      }
+
+      res.on('close', cleanup)
+      res.on('error', cleanup)
+      req.on('aborted', cleanup)
+
+      file.on('error', cleanup)
+      file.on('end', cleanup)
       file.pipe(res)
     } else {
       const head = {
@@ -36,7 +49,22 @@ const getVideoStream = async (
         'Content-Type': 'video/mp4',
       }
       res.writeHead(200, head)
-      createReadStream(filePath).pipe(res)
+      const file = createReadStream(filePath)
+
+      const cleanup = () => {
+        file.destroy()
+        res.removeListener('close', cleanup)
+        res.removeListener('error', cleanup)
+        req.removeListener('aborted', cleanup)
+      }
+
+      res.on('close', cleanup)
+      res.on('error', cleanup)
+      req.on('aborted', cleanup)
+
+      file.on('error', cleanup)
+      file.on('end', cleanup)
+      file.pipe(res)
     }
   } catch (error: any) {
     console.error('getVideoStream error', { error, filePath })
@@ -46,3 +74,11 @@ const getVideoStream = async (
 
 
 export default getVideoStream
+
+// Disable Next.js response size tracking and body parsing for streaming
+export const config = {
+  api: {
+    bodyParser: false,
+    responseLimit: false,
+  },
+}

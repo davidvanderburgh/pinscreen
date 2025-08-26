@@ -1,6 +1,6 @@
 import styles from '@/styles/display.module.scss'
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import $ from 'jquery'
 import { useClock } from "@/hooks/useClock";
 import { UI } from "@/components/UI";
@@ -37,6 +37,7 @@ export const Display = () => {
   const [videoIsPlaying, setVideoIsPlaying] = useState<boolean>(true)
   const [hours, minutes, seconds] = currentTime.split(':')
   const [heartBeat, setHeartBeat] = useState<dayjs.Dayjs>(dayjs())
+  const resyncCooldownRef = useRef<number>(0)
 
   const handleOpenUi = () => setUiOpen(true)
   const handleCloseUi = () => setUiOpen(false)
@@ -94,9 +95,14 @@ export const Display = () => {
       (settings?.timeBetweenVideos ?? 0), 'seconds').isBefore(dayjs(), 'seconds'
     )
     if (isDead) {
-      console.log('woops I died, restarting', videoUrl, new Date())
-      resync()
-      console.log('alive again')
+      const now = Date.now()
+      // Debounce resync to at most once every 10 seconds
+      if (now - resyncCooldownRef.current > 10_000) {
+        resyncCooldownRef.current = now
+        console.log('woops I died, restarting', videoUrl, new Date())
+        resync()
+        console.log('alive again')
+      }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentTime])
